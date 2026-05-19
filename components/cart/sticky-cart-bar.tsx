@@ -11,14 +11,15 @@ export function StickyCartBar({ tableId }: { tableId: string }) {
   const { itemCount, subtotal } = useCart();
   const [pulseCount, setPulseCount] = useState(false);
 
-  if (itemCount === 0) return null;
-  if (pathname.endsWith("/cart") || pathname.endsWith("/details") || pathname.endsWith("/success")) return null;
-
   useEffect(() => {
+    if (itemCount === 0) return;
     setPulseCount(true);
     const timer = window.setTimeout(() => setPulseCount(false), 180);
     return () => window.clearTimeout(timer);
   }, [itemCount]);
+
+  if (itemCount === 0) return null;
+  if (pathname.endsWith("/cart") || pathname.endsWith("/details") || pathname.endsWith("/success")) return null;
 
   return (
     <div className="fade-in-up fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-md px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-2.5">
