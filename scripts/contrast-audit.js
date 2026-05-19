@@ -28,20 +28,23 @@ function contrastRatio(hexA, hexB) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-const brand = {
-  'brand-brown': '#4A2C21',
-  'brand-beige': '#E8D9C5',
-  'brand-white': '#F5F1EA',
-  'muted': '#7a5f50',
+const palette = {
+  'bg-primary': '#2B2014',
+  'bg-surface': '#1E160D',
+  'bg-elevated': '#21180F',
+  'text-primary': '#FFFFFF',
+  'text-secondary': '#D9C9A6',
+  'text-tertiary': '#B8A68A',
+  'accent-gold': '#FCB03A',
 };
 
 const pairs = [
-  ['brand-brown','brand-white'],
-  ['brand-white','brand-brown'],
-  ['brand-brown','brand-beige'],
-  ['brand-beige','brand-brown'],
-  ['muted','brand-white'],
-  ['muted','brand-beige'],
+  ['text-primary', 'bg-primary'],
+  ['text-primary', 'bg-surface'],
+  ['text-secondary', 'bg-primary'],
+  ['text-secondary', 'bg-surface'],
+  ['text-tertiary', 'bg-elevated'],
+  ['accent-gold', 'bg-surface'],
 ];
 
 function check(c) {
@@ -54,9 +57,9 @@ function check(c) {
 }
 
 const results = pairs.map(([fg,bg]) => {
-  const ratio = contrastRatio(brand[fg], brand[bg]);
+  const ratio = contrastRatio(palette[fg], palette[bg]);
   const res = check(ratio);
-  return { fg, bg, fg_hex: brand[fg], bg_hex: brand[bg], ...res };
+  return { fg, bg, fg_hex: palette[fg], bg_hex: palette[bg], ...res };
 });
 
 console.log(JSON.stringify(results, null, 2));
