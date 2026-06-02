@@ -235,7 +235,9 @@ export function CustomerDetailsForm({ tableId, allowOrderNotes }: { tableId: str
       }
 
       clearCart();
-      router.push(`/order/table/${tableId}/success?orderId=${result.orderId}`);
+      router.push(
+        `/order/table/${tableId}/success?orderId=${result.orderId}&orderType=${encodeURIComponent(orderType)}`,
+      );
     });
   };
 

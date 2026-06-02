@@ -7,10 +7,10 @@ export default async function SuccessPage({
   searchParams,
 }: {
   params: Promise<{ tableId: string }>;
-  searchParams: Promise<{ orderId?: string }>;
+  searchParams: Promise<{ orderId?: string; orderType?: string }>;
 }) {
   const { tableId } = await params;
-  const { orderId } = await searchParams;
+  const { orderId, orderType: queryOrderType } = await searchParams;
   const normalizedTable = normalizeTable(tableId);
 
   if (!orderId) {
@@ -64,7 +64,9 @@ export default async function SuccessPage({
             <div className="mt-2 flex items-center justify-between">
               <span className="text-xs font-medium text-[var(--text-secondary)]">Order type</span>
               <span className="text-xs font-bold text-[var(--text-primary)]">
-                {order.order_type === "Take-Away" ? "🥡 Takeaway" : "🍽 Dine-In"}
+                {order.order_type === "Take-Away" || queryOrderType === "Take-Away"
+                  ? "🥡 Takeaway"
+                  : "🍽 Dine-In"}
               </span>
             </div>
             <div className="mt-2 flex items-center justify-between border-t border-[var(--border)] pt-2">
