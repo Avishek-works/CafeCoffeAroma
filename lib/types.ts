@@ -44,6 +44,8 @@ export interface CartLineItem {
   addons?: AddonOption[];
 }
 
+export type OrderType = "Dine-In" | "Take-Away";
+
 export interface CustomerDraft {
   name: string;
   phone: string;
@@ -58,6 +60,7 @@ export interface PlaceOrderInput {
   customerEmail?: string;
   customerDob?: string;
   notes?: string;
+  orderType?: OrderType;
   items: CartLineItem[];
 }
 
@@ -67,6 +70,13 @@ export interface PlaceOrderResult {
   error?: string;
 }
 
+export interface OrderDetails {
+  id: string;
+  table_number: string;
+  final_amount: number;
+  order_type?: string;
+  order_source?: string;
+}
 
 export interface CustomerLookupResult {
   found: boolean;

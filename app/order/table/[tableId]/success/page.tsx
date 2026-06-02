@@ -61,6 +61,12 @@ export default async function SuccessPage({
               <span className="text-xs font-medium text-[var(--text-secondary)]">Table</span>
               <span className="text-xs font-bold text-[var(--text-primary)]">{order.table_number}</span>
             </div>
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-xs font-medium text-[var(--text-secondary)]">Order type</span>
+              <span className="text-xs font-bold text-[var(--text-primary)]">
+                {order.order_type === "Take-Away" ? "🥡 Takeaway" : "🍽 Dine-In"}
+              </span>
+            </div>
             <div className="mt-2 flex items-center justify-between border-t border-[var(--border)] pt-2">
               <span className="text-sm font-medium text-[var(--text-secondary)]">Total</span>
               <span className="text-lg font-bold text-[var(--accent-gold)]">
