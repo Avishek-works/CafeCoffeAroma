@@ -7,7 +7,7 @@ import { formatCurrency } from "@/lib/format";
 import { toTitleCaseLabel } from "@/lib/menu-ui";
 
 export function CartPageView({ tableId, allowOrderNotes }: { tableId: string; allowOrderNotes: boolean }) {
-  const { items, subtotal, notes, setNotes, setQty } = useCart();
+  const { items, subtotal, notes, setNotes, setQty, orderType, setOrderType } = useCart();
 
   return (
     <section>
@@ -77,6 +77,37 @@ export function CartPageView({ tableId, allowOrderNotes }: { tableId: string; al
                 />
               </label>
             ) : null}
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-[0_10px_24px_-16px_rgba(0,0,0,0.55)]">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--accent-gold)] opacity-90">Order type</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setOrderType("Dine-In")}
+                className={`inline-flex min-h-11 items-center justify-center rounded-2xl border px-3 text-sm font-semibold transition ${
+                  orderType === "Dine-In"
+                    ? "border-[var(--accent-gold)] bg-[var(--accent-gold)] text-[var(--bg-primary)]"
+                    : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-warm)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                🍽 Dine-In
+              </button>
+              <button
+                type="button"
+                onClick={() => setOrderType("Take-Away")}
+                className={`inline-flex min-h-11 items-center justify-center rounded-2xl border px-3 text-sm font-semibold transition ${
+                  orderType === "Take-Away"
+                    ? "border-[var(--accent-gold)] bg-[var(--accent-gold)] text-[var(--bg-primary)]"
+                    : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-warm)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                🥡 Takeaway
+              </button>
+            </div>
+            <p className="mt-3 text-sm text-[var(--text-secondary)]">
+              {orderType === "Take-Away" ? `🥡 Packed for takeaway pickup` : `🍽 Served at Table ${tableId}`}
+            </p>
           </div>
 
           {/* Sticky checkout */}
