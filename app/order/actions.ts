@@ -10,9 +10,13 @@ import {
 import { createBillItems } from "@/db/orders";
 import { getConfiguredClientId } from "@/lib/config";
 import { getOrderNotesSupport } from "@/lib/order-capabilities";
-import type { CustomerLookupResult, PlaceOrderInput, PlaceOrderResult } from "@/lib/types";
+import type { CustomerLookupResult, OrderType, PlaceOrderInput, PlaceOrderResult } from "@/lib/types";
 
 const REQUIRED_STATUS = "PENDING";
+const ORDER_SOURCE = "Air Menu" as const;
+
+const isValidOrderType = (value: unknown): value is OrderType => value === "Dine-In" || value === "Take-Away";
+const normalizeOrderType = (value: unknown): OrderType => (isValidOrderType(value) ? value : "Dine-In");
 
 const sanitizeText = (value: string | undefined | null) => (value ?? "").trim();
 
@@ -101,6 +105,7 @@ export async function placeOrderAction(input: PlaceOrderInput): Promise<PlaceOrd
     const customerDobRaw = sanitizeText(input.customerDob);
     const customerDob = normalizeDob(customerDobRaw);
     const orderNotes = sanitizeOrderNotes(input.notes);
+    const orderType = normalizeOrderType(input.orderType);
 
     if (!tableNumber || !customerPhone || input.items.length === 0) {
       console.log("[order] validation failed: missing required fields", {
@@ -259,6 +264,8 @@ export async function placeOrderAction(input: PlaceOrderInput): Promise<PlaceOrd
       status: REQUIRED_STATUS,
       notesColumn: orderNotesSupport.columnName,
       notes: orderNotes || undefined,
+      orderType,
+      orderSource: ORDER_SOURCE,
     });
 
     if (billError) {
@@ -275,6 +282,8 @@ export async function placeOrderAction(input: PlaceOrderInput): Promise<PlaceOrd
           discount,
           final_amount: finalAmount,
           status: REQUIRED_STATUS,
+          order_type: orderType,
+          order_source: ORDER_SOURCE,
           hasCustomerId: Boolean(resolvedCustomerId),
         },
       });

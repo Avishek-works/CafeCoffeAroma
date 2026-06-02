@@ -48,7 +48,7 @@ export function CustomerDetailsForm({ tableId, allowOrderNotes }: { tableId: str
   const [isExistingCustomer, setIsExistingCustomer] = useState<boolean | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<"phone" | "details">("phone");
 
-  const { items, notes, customer, setCustomer, subtotal, clearCart } = useCart();
+  const { items, notes, customer, setCustomer, subtotal, clearCart, orderType } = useCart();
   const maxDob = useMemo(() => getTodayDateValue(), []);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestLookupTokenRef = useRef(0);
@@ -225,6 +225,7 @@ export function CustomerDetailsForm({ tableId, allowOrderNotes }: { tableId: str
         customerEmail: customer.email,
         customerDob: customer.dob,
         notes: combinedNotes || undefined,
+        orderType,
         items,
       });
 
@@ -234,7 +235,9 @@ export function CustomerDetailsForm({ tableId, allowOrderNotes }: { tableId: str
       }
 
       clearCart();
-      router.push(`/order/table/${tableId}/success?orderId=${result.orderId}`);
+      router.push(
+        `/order/table/${tableId}/success?orderId=${result.orderId}&orderType=${encodeURIComponent(orderType)}`,
+      );
     });
   };
 
@@ -343,8 +346,14 @@ export function CustomerDetailsForm({ tableId, allowOrderNotes }: { tableId: str
 
           <p className="text-xs text-[var(--text-secondary)]">Share your birthday for special treats and offers.</p>
 
-          <div className="rounded-2xl border border-[var(--border-warm)] bg-[var(--bg-elevated)] p-4">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
             <div className="flex items-center justify-between">
+              <span className="text-sm text-[var(--text-secondary)]">Order type</span>
+              <span className="text-sm font-semibold text-[var(--text-primary)]">
+                {orderType === "Take-Away" ? "🥡 Takeaway" : "🍽 Dine-In"}
+              </span>
+            </div>
+            <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
               <span className="text-sm text-[var(--text-secondary)]">Order total</span>
               <span className="text-xl font-bold text-[var(--accent-gold)] tracking-tight">₹{subtotal.toFixed(2)}</span>
             </div>

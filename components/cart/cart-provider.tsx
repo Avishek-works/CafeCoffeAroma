@@ -1,15 +1,20 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { CartLineItem, CustomerDraft } from "@/lib/types";
+import type { CartLineItem, CustomerDraft, OrderType } from "@/lib/types";
 
 const STORAGE_KEY = "cca-cart-v1";
+
+const DEFAULT_ORDER_TYPE: OrderType = "Dine-In";
+
+const isValidOrderType = (value: unknown): value is OrderType => value === "Dine-In" || value === "Take-Away";
 
 interface StoredCart {
   tableId: string | null;
   notes: string;
   customer: CustomerDraft;
   items: Record<string, CartLineItem>;
+  orderType: OrderType;
 }
 
 interface CartContextValue {
@@ -17,6 +22,7 @@ interface CartContextValue {
   items: CartLineItem[];
   notes: string;
   customer: CustomerDraft;
+  orderType: OrderType;
   itemCount: number;
   subtotal: number;
   setTable: (tableId: string) => void;
@@ -25,6 +31,7 @@ interface CartContextValue {
   decreaseMenuItem: (menuItemId: string) => void;
   setNotes: (notes: string) => void;
   setCustomer: (customer: Partial<CustomerDraft>) => void;
+  setOrderType: (orderType: OrderType) => void;
   clearCart: () => void;
 }
 
@@ -35,6 +42,7 @@ const emptyCart: StoredCart = {
   notes: "",
   customer: defaultCustomer,
   items: {},
+  orderType: DEFAULT_ORDER_TYPE,
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -93,6 +101,7 @@ const sanitizeStoredCart = (value: unknown): StoredCart => {
     notes: typeof parsed.notes === "string" ? parsed.notes : "",
     customer: { ...defaultCustomer, ...(parsed.customer ?? {}) },
     items: sanitizedItems,
+    orderType: isValidOrderType(parsed.orderType) ? parsed.orderType : DEFAULT_ORDER_TYPE,
   };
 };
 
@@ -130,11 +139,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     items,
     notes: cart.notes,
     customer: cart.customer,
+    orderType: cart.orderType,
     itemCount,
     subtotal,
     setTable: (tableId) =>
       setCart((current) =>
-        current.tableId === tableId ? current : { tableId, notes: "", customer: defaultCustomer, items: {} },
+        current.tableId === tableId
+          ? current
+          : { tableId, notes: "", customer: defaultCustomer, items: {}, orderType: current.orderType },
       ),
     addItem: (item) =>
       setCart((current) => {
@@ -194,6 +206,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setNotes: (notes) => setCart((current) => ({ ...current, notes })),
     setCustomer: (customer) =>
       setCart((current) => ({ ...current, customer: { ...current.customer, ...customer } })),
+    setOrderType: (orderType) => setCart((current) => ({ ...current, orderType })),
     clearCart: () => setCart((current) => ({ ...current, notes: "", items: {} })),
   };
 

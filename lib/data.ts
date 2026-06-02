@@ -3,7 +3,7 @@ import { getBillOrderDetails } from "@/db/bills";
 import { listProductsForMenu } from "@/db/orders";
 import { getConfiguredClientId } from "@/lib/config";
 import { sortCategoryNames } from "@/lib/menu-ui";
-import type { MenuCategory, RawMenuItem } from "@/lib/types";
+import type { MenuCategory, OrderDetails, RawMenuItem } from "@/lib/types";
 
 export const normalizeTable = (tableId: string) => tableId.trim().toUpperCase();
 
@@ -48,7 +48,7 @@ export async function getMenuData(): Promise<{ categories: MenuCategory[]; items
   return { categories, items };
 }
 
-export async function getOrderDetails(orderId: string) {
+export async function getOrderDetails(orderId: string): Promise<OrderDetails | null> {
   noStore();
   const { data, error } = await getBillOrderDetails(orderId);
 
